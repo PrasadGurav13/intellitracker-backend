@@ -1,6 +1,5 @@
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -45,6 +44,10 @@ model Workout {
 model Exercise {
   id   Int    @id @default(autoincrement())
   name String @unique
+  category         String?
+  createdAt        DateTime          @default(now())
+
+  workoutExercises WorkoutExercise[]
 }
 
 model WorkoutExercise {
