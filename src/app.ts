@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import { loginController } from "./controllers/auth.controller";
 import authRouter from "./routes/auth.route";
 
 const app = express();

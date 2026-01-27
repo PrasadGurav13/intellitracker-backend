@@ -13,6 +13,7 @@ model User {
   profile   UserProfile?
   workouts  Workout[]
   goals     Goal[]
+  isDeleted Boolean  @default(false)
   createdAt DateTime @default(now())
 }
 
@@ -39,6 +40,7 @@ model Workout {
   notes     String?
   user      User     @relation(fields: [userId], references: [id])
   exercises WorkoutExercise[]
+  isDeleted Boolean  @default(false)
 }
 
 model Exercise {
@@ -46,6 +48,8 @@ model Exercise {
   name String @unique
   category         String?
   createdAt        DateTime          @default(now())
+  isDeleted Boolean  @default(false)
+
 
   workoutExercises WorkoutExercise[]
 }
@@ -54,6 +58,7 @@ model WorkoutExercise {
   id         Int      @id @default(autoincrement())
   workoutId  Int
   exerciseId Int
+  isDeleted Boolean  @default(false)
   workout    Workout  @relation(fields: [workoutId], references: [id])
   exercise   Exercise @relation(fields: [exerciseId], references: [id])
   sets       WorkoutSet[]
@@ -65,6 +70,7 @@ model WorkoutSet {
   weightKg         Float?
   reps             Int?
   durationSec      Int?
+  isDeleted Boolean  @default(false)
   workoutExercise  WorkoutExercise @relation(fields: [workoutExerciseId], references: [id])
 }
 
@@ -76,6 +82,7 @@ model Goal {
   targetValue Float
   currentValue Float @default(0)
   completed   Boolean @default(false)
+  isDeleted Boolean  @default(false)
   user        User    @relation(fields: [userId], references: [id])
 }
 
