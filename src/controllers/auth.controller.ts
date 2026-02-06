@@ -1,68 +1,31 @@
 import {prisma} from '../utils/prisma.util'
 import bcrypt from 'bcrypt'
-import {NextFunction, Request, response, Response} from 'express'
+import {NextFunction, Request, Response} from 'express'
+import { createUser, validateUser } from '~/services/auth.service';
+import { catchAsync } from '~/utils/catchAsync.util';
 import { generateToken } from '~/utils/jwt.util';
 
 export const signupController = async ( req: Request, res: Response, next: NextFunction ) => {
-    const { email, password, firstName, lastName, mobileNo } = req.body;
-    const usermail = email.trim().toLowerCase();
+    const email = req.body.email.trim().toLowerCase();
 
-    const userAlreadyExist = await prisma.user.findFirst({
-        where:{
-            email: usermail,
-            isDeleted: false
-        }
-    })
+    const userData = await createUser({...req.body, email})
+    const token = await generateToken(userData, '30d');
 
-    if (userAlreadyExist) {
-        return next("user already exist")
-    }
-
-    const userData = await prisma.user.create({
-        data: {
-           firstName: firstName,
-           lastName: lastName,
-           mobileNo: mobileNo,
-           email: usermail,
-           password: bcrypt.hashSync(password, 10),
-        }
-    })
-
-    const token = generateToken(userData, '30d');
-
-    return res.json({
+    return res.status(201).json({
         token,
         userData
     })
 } 
 
-export const loginController = async (req: Request, res: Response, next: NextFunction) =>{
-
+export const loginController = catchAsync(async (req: Request, res: Response) =>{
     const { email, password } = req.body;
     const usermail = email.trim().toLowerCase();
 
-    const userData = await prisma.user.findFirst({
-        where: { 
-            email: usermail,
-            isDeleted: false,
-        }
-    });
-
-    if (!userData) {
-        return next("user not found")
-    }
-
-    const isPasswordValid = bcrypt.compareSync(password, userData.password);
-    
-    if (!isPasswordValid) {
-        return next('invalid Credentials')
-    }
-
+    const userData = await validateUser(usermail, password);
     const token = generateToken(userData, '30d');
 
     return res.json({
         token,
         userData
     });
-
-}
+});
