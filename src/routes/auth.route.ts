@@ -1,11 +1,13 @@
 import { Router } from "express";
 import { loginController, signupController } from "~/controllers/auth.controller";
+import { loginValidator, signupValidator } from "~/middleware";
+import { validateData } from "~/middleware/validation.middleware";
 
 
 const authRouter = Router();
 
-authRouter.post("/login", loginController);
+authRouter.post("/login", validateData(loginValidator), loginController);
 
-authRouter.post("/signup", signupController);
+authRouter.post("/signup", validateData(signupValidator), signupController);
 
 export default authRouter;
