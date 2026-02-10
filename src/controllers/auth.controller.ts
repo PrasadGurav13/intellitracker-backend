@@ -5,7 +5,7 @@ import { createUser, validateUser } from '~/services/auth.service';
 import { catchAsync } from '~/utils/catchAsync.util';
 import { generateToken } from '~/utils/jwt.util';
 
-export const signupController = async ( req: Request, res: Response, next: NextFunction ) => {
+export const signupController = catchAsync(async ( req: Request, res: Response, next: NextFunction ) => {
     const email = req.body.email.trim().toLowerCase();
 
     const userData = await createUser({...req.body, email})
@@ -15,7 +15,7 @@ export const signupController = async ( req: Request, res: Response, next: NextF
         token,
         userData
     })
-} 
+});
 
 export const loginController = catchAsync(async (req: Request, res: Response) =>{
     const { email, password } = req.body;
