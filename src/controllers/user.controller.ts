@@ -1,9 +1,25 @@
 import { Response } from "express";
 import { authRequest } from "~/middleware";
+import { getUserById, updateUserData } from "~/services";
 import { catchAsync } from "~/utils/catchAsync.util";
 
-export const userProfileController = catchAsync(async (req: authRequest, res: Response) => {
+export const getUser = catchAsync(async (req: authRequest, res: Response) => {
     const userid = req.user?.id;
-    
-    const userData = 
+    const userData = await getUserById(userid!)
+    res.status(200).json({
+        success: true,
+        data: userData
+    })
 }) 
+
+export const updateUser = catchAsync(async (req: authRequest, res: Response) => {
+    const userid = req.user?.id;
+    const userUpdateData = req.body;
+
+    const updatedUser = await updateUserData(userid!, userUpdateData);
+    
+    res.status(200).json({
+        success: true,
+        data: updatedUser
+    })
+})

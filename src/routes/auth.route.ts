@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginController, signupController } from "~/controllers/auth.controller";
+import { loginController, signupController } from "~/controllers";
 import { loginValidator, signupValidator } from "~/middleware";
 import { validateData } from "~/middleware/validation.middleware";
 
