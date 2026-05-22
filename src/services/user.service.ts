@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { User, UserProfile } from "@prisma/client";
 import { prisma } from "~/utils/prisma.util"
 
 export const getUserById = async (userId: number) => {
@@ -42,4 +42,55 @@ export const updateUserData = async (userId: number, userData: Partial<User>) =>
 
     const {password, ...safeUser} = updatedUser;
     return safeUser;
+}
+
+export const deleteUserData = async (userId: number) => {
+
+    if (!userId) {
+        throw new Error("User ID is required");
+    }
+
+    const deletedUser = await prisma.user.update({
+        where: { id: userId },
+        data: { isDeleted: true }
+    })
+
+    if (!deletedUser) {
+        throw new Error("Failed to delete user");
+    }
+
+    const {password, ...safeUser} = deletedUser;
+    return safeUser;
+}
+
+export const createUserProfile = async (userId: number, userData: Partial<UserProfile>) => {
+
+    if (!userId) {
+        throw new Error("User ID is required");
+    }
+
+    const createdProfile = await prisma.userProfile.create({
+        data: {
+            userId,
+            ...userData
+        }
+    });
+
+    return createdProfile;
+}
+
+export const updateUserProfile = async (userId: number, userData: Partial<UserProfile>) => {
+
+    if (!userId) {
+        throw new Error("User ID is required");
+    }
+
+    const updatedProfile = await prisma.userProfile.update({
+        where: { userId },
+        data: {
+            ...userData
+        }
+    });
+
+    return updatedProfile;
 }
