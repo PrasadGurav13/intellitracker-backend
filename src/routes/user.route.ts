@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createProfile, deleteUser, getUser, updateUser } from "~/controllers";
+import { createProfile, deleteUser, getUser, updateUser, updateProfile } from "~/controllers";
 import { authorizationMiddleware, userProfileValidator, getUserValidator, updateUserValidator } from "~/middleware";
 import { validateData } from "~/middleware/validation.middleware";
 
