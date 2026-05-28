@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { authRequest } from "~/middleware";
-import { createUserWorkout } from "~/services/workout.service";
+import { createUserWorkout, updateUserWorkout } from "~/services/workout.service";
 import { catchAsync } from "~/utils/catchAsync.util";
 import { prisma } from "~/utils/prisma.util";
 
@@ -24,6 +24,21 @@ export const getWorkoutById = catchAsync(async (req: authRequest, res: Response)
     const workout = await prisma.workout.findUnique({
         where: {
             id: Number(id)
+        },
+        include: {
+            exercises: {
+                where: {
+                    isDeleted: false
+                }
+            },
+            include: {
+                exercise: true,
+                sets: {
+                    where: {                        
+                        isDeleted: false
+                    }
+                }
+            }
         }
     })
 
@@ -42,5 +57,18 @@ export const createWorkouts = catchAsync(async (req: authRequest, res: Response)
     res.status(201).json({
         success: true,
         data: createdWorkout
+    })
+})
+
+export const updateWorkouts = catchAsync(async (req: authRequest, res: Response) => {
+    const userId = req.user?.id;
+    const workoutData = req.body;
+    const { id } = req.params;
+
+    const updatedWorkout = await updateUserWorkout(userId!, Number(id), workoutData);
+
+    res.status(200).json({
+        success: true,
+        data: updatedWorkout
     })
 })
